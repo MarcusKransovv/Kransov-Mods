@@ -3,7 +3,7 @@
         {
             "name": "Auto-AD for Advance-RP Chocolate",
             "version": "2.0",
-            "description": "Автоматическая подача объявлений на Advance-RP Chocolate",
+            "description": "Автоматическая подача объявлений на проекте Advance-RolePlay, сервере Chocolate",
             "history": "Версия 1.0.0 — 15.07.2026\n- Создание скрипта\n\nВерсия 2.0.0 - 28.07.2026\n- Рефакторинг, оптимизация.",
             "last_update": "15.08.2025",
             "link": "https://raw.githubusercontent.com/USERNAME/kransov-mods/main/scripts/auto-ad.lua"
