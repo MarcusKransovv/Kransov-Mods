@@ -10,4 +10,15 @@
             "link": "https://raw.githubusercontent.com/MarcusKransovv/Kransov-Mods/refs/heads/main/scripts/auto-ad.lua"
         }
     ]
+},
+        {
+            "name": "Kransov Mods Manager",
+            "filename": "kransov-mods.luac",
+            "version": "1.0.0",
+            "description": "Менеджер скриптов студии Kransov Mods. Установка и обновление скриптов в один клик.",
+            "history": "Версия 1.0.0 — 22.08.2026\n- Создание менеджера\n- Каталог скриптов с GitHub\n- Автоустановка и удобное удаление скриптов в два клика.",
+            "last_update": "22.08.2026",
+            "link": "https://github.com/MarcusKransovv/Kransov-Mods/raw/refs/heads/main/kransov-mods.luac"
+        }
+    ]
 }
