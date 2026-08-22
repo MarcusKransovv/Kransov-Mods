@@ -7,7 +7,7 @@
             "description": "Автоматическая подача объявлений на проекте Advance-RolePlay, сервере Chocolate",
             "history": "Версия 1.0.0 — 15.07.2026\n- Создание скрипта\n\nВерсия 2.0.0 - 28.07.2026\n- Рефакторинг, оптимизация.",
             "last_update": "28.07.2026",
-            "link": "https://raw.githubusercontent.com/USERNAME/kransov-mods/main/scripts/auto-ad.lua"
+            "link": "https://raw.githubusercontent.com/MarcusKransovv/Kransov-Mods/refs/heads/main/scripts/auto-ad.lua"
         }
     ]
 }
