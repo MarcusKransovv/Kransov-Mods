@@ -17,6 +17,15 @@
             "history": "Версия 1.0.0 — 22.08.2026\n- Создание менеджера\n- Каталог скриптов с GitHub\n- Автоустановка и удобное удаление скриптов в два клика.",
             "last_update": "22.08.2026",
             "link": "https://github.com/MarcusKransovv/Kransov-Mods/raw/refs/heads/main/kransov-mods.luac"
+        },
+        {
+            "name": "Gay Locator",
+            "filename": "gaylocator.lua",
+            "version": "1.0.0",
+            "description": "[ROFL SCRIPT] Коля Михайлов и Дардас Северов под колпаком. Гей-радар с детектором приближения. Орёт когда они рядом.",
+            "history": "Версия 1.0.0 - 27.08.2026\n- Создание скрипта\n- Добавлены две цели: Коля Михайлов и Дардас Северов\n- Детектор приближения с 4 зонами (200м, 100м, 50м, 20м)\n- Мониторинг сервера (появление/выход)\n- Сохранение настроек в JSON\n- Более 50 уникальных криков для каждой цели",
+            "last_update": "27.08.2026",
+            "link": "https://github.com/MarcusKransovv/Kransov-Mods/raw/refs/heads/main/scripts/gaylocator.lua"
         }
     ]
 }
