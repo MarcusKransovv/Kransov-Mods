@@ -14,7 +14,7 @@
 | Скрипт | Назначение | Сервер |
 |--------|------------|--------|
 | Auto-AD | Авто-подача объявлений | Advance-RP Chocolate |
-| Tidy Chat (В разработке) | Перенос подсказок из чата в уведомления | Advance-RP Chocolate |
+| Gay Locator [ROFL] | Система слежки за Колей и Дардасом | Advance-RP Chocolate |
 
 # 🚀 Как пользоваться?
 1. Скачай `kransov-mods.luac`
