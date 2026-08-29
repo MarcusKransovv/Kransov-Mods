@@ -15,6 +15,7 @@
 |--------|------------|--------|
 | Auto-AD | Авто-подача объявлений | Advance-RP Chocolate |
 | Gay Locator [ROFL] | Система слежки за Колей и Дардасом | Advance-RP Chocolate |
+| Bank Helper | Менеджер банковских счетов | Advance-RP Chocolate |
 
 # 🚀 Как пользоваться?
 1. Скачай `kransov-mods.luac`
