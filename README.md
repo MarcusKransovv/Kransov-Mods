@@ -35,7 +35,7 @@ MIT License © 2026 Marcus Kransov
 # 💬 Контакты
 - **GitHub:** [MarcusKransovv/Kransov-Mods](https://github.com/MarcusKransovv/Kransov-Mods)
 - **VK:** [marcuskransov](https://vk.com/marcuskransov)
-- **Discord автора:** marcuskransov
+- **Discord автора:** marcus_kransov
 - **Discord студии:** [Kransov Mods | Скрипты для SA:MP](https://discord.gg/pWRUrjNnSe)
 
 # 🙃 FAQ
