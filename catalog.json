@@ -26,6 +26,15 @@
             "history": "Версия 1.0.0 - 27.08.2026\n- Создание скрипта\n- Добавлены две цели: Коля Михайлов и Дардас Северов\n- Детектор приближения с 4 зонами (200м, 100м, 50м, 20м)\n- Мониторинг сервера (появление/выход)\n- Сохранение настроек в JSON\n- Более 50 уникальных криков для каждой цели",
             "last_update": "27.08.2026",
             "link": "https://github.com/MarcusKransovv/Kransov-Mods/raw/refs/heads/main/scripts/gaylocator.lua"
+        },
+                {
+            "name": "Bank Helper",
+            "filename": "bank-helper.lua",
+            "version": "1.0.0",
+            "description": "Менеджер банковских счетов. Авто-ввод PIN, списки получателей, быстрые суммы, умное сохранение.",
+            "history": "Версия 1.0.0 - 29.08.2026\n- Авто-ввод PIN для своих счетов\n- Быстрые суммы (телефон, счета, переводы)\n- Список получателей с поиском\n- Смена PIN без похода в банк\n- Уведомления с анимацией",
+            "last_update": "29.08.2026",
+            "link": "https://github.com/MarcusKransovv/Kransov-Mods/raw/refs/heads/main/scripts/bank-helper.lua"
         }
     ]
 }
