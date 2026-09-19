@@ -1,7 +1,7 @@
 script_name("CPOI")
--- Фактический разработчик неизвестен. Переделано под Advance-RP. Студия разработки Kransov Mods.
--- Контакты: https://discord.gg/pWRUrjNnSe. Приятной игры. Все сообщения об ошибках и предложениях оставляйте
--- в дискорде. Спасибо за использование скрипта.
+-- Р¤Р°РєС‚РёС‡РµСЃРєРёР№ СЂР°Р·СЂР°Р±РѕС‚С‡РёРє РЅРµРёР·РІРµСЃС‚РµРЅ. РџРµСЂРµРґРµР»Р°РЅРѕ РїРѕРґ Advance-RP. РЎС‚СѓРґРёСЏ СЂР°Р·СЂР°Р±РѕС‚РєРё Kransov Mods.
+-- РљРѕРЅС‚Р°РєС‚С‹: https://discord.gg/pWRUrjNnSe. РџСЂРёСЏС‚РЅРѕР№ РёРіСЂС‹. Р’СЃРµ СЃРѕРѕР±С‰РµРЅРёСЏ РѕР± РѕС€РёР±РєР°С… Рё РїСЂРµРґР»РѕР¶РµРЅРёСЏС… РѕСЃС‚Р°РІР»СЏР№С‚Рµ
+-- РІ РґРёСЃРєРѕСЂРґРµ. РЎРїР°СЃРёР±Рѕ Р·Р° РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ СЃРєСЂРёРїС‚Р°.
 script_description("CPOI coordination tool for Advance-RP")
 script_version_number(1)
 script_version("1.0")
@@ -93,7 +93,8 @@ local checkpointRadius = 3.0
 local mapMarker = {
     timer = 0,
     coordinates = {},
-    key = keys.VK_U
+    key = keys.VK_U,
+    isCpoi = false
 }
 local indicator = {coordinates = {x = 348, y = 764}}
 
@@ -166,7 +167,7 @@ local function deleteCurrentCheckpoint()
     end
 end
 local function clearMapMarkerIfMatches(x, y, z)
-    if mapMarker.coordinates.x and mapMarker.coordinates.y and mapMarker.coordinates.z then
+    if mapMarker.coordinates.x and mapMarker.coordinates.y and mapMarker.coordinates.z and os.difftime(os.clock(), mapMarker.timer) <= 10 then
         if math.abs(mapMarker.coordinates.x - x) < 0.01 and math.abs(mapMarker.coordinates.y - y) < 0.01 and math.abs(mapMarker.coordinates.z - z) < 0.01 then
             mapMarker.coordinates = {}
             mapMarker.timer = 0
@@ -213,7 +214,7 @@ function main()
     sampRegisterChatCommand("cpois", showCpoisDialog)
     sampRegisterChatCommand("cpoichat", setCpoiChat)
 
-    sendScriptMessage(("Канал отправки координат: %s. Используй /cpoichat для выбора канала."):format(getConfiguredChannelCommand()))
+    sendScriptMessage(("РљР°РЅР°Р» РѕС‚РїСЂР°РІРєРё РєРѕРѕСЂРґРёРЅР°С‚: %s. РСЃРїРѕР»СЊР·СѓР№ /cpoichat РґР»СЏ РІС‹Р±РѕСЂР° РєР°РЅР°Р»Р°."):format(getConfiguredChannelCommand()))
 
     lua_thread.create(function()
         wait(3000)
@@ -250,13 +251,13 @@ function main()
             local sw, sh = getScreenResolution()
 
             if sx >= 0 and sy >= 0 and sx < sw and sy < sh then
-                -- Первый луч: находим поверхность/объект под курсором.
+                -- РџРµСЂРІС‹Р№ Р»СѓС‡: РЅР°С…РѕРґРёРј РїРѕРІРµСЂС…РЅРѕСЃС‚СЊ/РѕР±СЉРµРєС‚ РїРѕРґ РєСѓСЂСЃРѕСЂРѕРј.
                 local targetX, targetY, targetZ = convertScreenCoordsToWorld3D(sx, sy, 700.0)
                 local camX, camY, camZ = getActiveCameraCoordinates()
                 local result, colpoint = processLineOfSight(camX, camY, camZ, targetX, targetY, targetZ, true, true, false, true, false, false, false)
 
                 if result and colpoint and colpoint.entity ~= 0 then
-                    -- Второй луч сохраняет исходную механику: опускаем точку к земле.
+                    -- Р’С‚РѕСЂРѕР№ Р»СѓС‡ СЃРѕС…СЂР°РЅСЏРµС‚ РёСЃС…РѕРґРЅСѓСЋ РјРµС…Р°РЅРёРєСѓ: РѕРїСѓСЃРєР°РµРј С‚РѕС‡РєСѓ Рє Р·РµРјР»Рµ.
                     local normal = colpoint.normal
                     local pos = Vector3D(colpoint.pos[1], colpoint.pos[2], colpoint.pos[3]) - Vector3D(normal[1], normal[2], normal[3]) * 0.1
 
@@ -274,7 +275,7 @@ function main()
 
                         renderFontDrawText(font1, string.format("%.2fm", dist), sx + 20, sy - 2 - fontHeight, 0xEEEEEEEE)
 
-                        -- LMB подтверждает точку.
+                        -- LMB РїРѕРґС‚РІРµСЂР¶РґР°РµС‚ С‚РѕС‡РєСѓ.
                         if isKeyDown(keys.VK_LBUTTON) then
                             sendBlipInChat(pos.x, pos.y, pos.z)
 
@@ -308,7 +309,7 @@ function main()
                 sendBlipInChat(mapMarker.coordinates.x, mapMarker.coordinates.y, mapMarker.coordinates.z)
             end
         end
-        if mapMarker.coordinates.x and mapMarker.coordinates.y and mapMarker.coordinates.z then
+        if mapMarker.isCpoi and mapMarker.coordinates.x and mapMarker.coordinates.y and mapMarker.coordinates.z then
             local positionX, positionY, positionZ = getCharCoordinates(PLAYER_PED)
 
             local distance = getDistanceBetweenCoords3d(positionX, positionY, 0, mapMarker.coordinates.x, mapMarker.coordinates.y, 0)
@@ -339,21 +340,21 @@ function setCpoiChat(arg)
     local channel = string.lower((arg or ""):match("^%s*(%S+)%s*$") or "")
 
     if channel == "" then
-        sendScriptMessage(("Текущий канал публикации: %s. Доступно: fm, rn, fn, g, ps, l."):format(getConfiguredChannelCommand()))
-        sendScriptMessage('Канал "fm" - чат вашей семьи. Канал "rn" - чат вашей организации.')
-        sendScriptMessage('Канал "g" - чат вашей группы. Канал "ps" - чат вашей партии. Канал "l" - чат лидеров.')
+        sendScriptMessage(("РўРµРєСѓС‰РёР№ РєР°РЅР°Р» РїСѓР±Р»РёРєР°С†РёРё: %s. Р”РѕСЃС‚СѓРїРЅРѕ: fm, rn, fn, g, ps, l."):format(getConfiguredChannelCommand()))
+        sendScriptMessage('РљР°РЅР°Р» "fm" - С‡Р°С‚ РІР°С€РµР№ СЃРµРјСЊРё. РљР°РЅР°Р» "rn" - С‡Р°С‚ РІР°С€РµР№ РѕСЂРіР°РЅРёР·Р°С†РёРё.')
+        sendScriptMessage('РљР°РЅР°Р» "g" - С‡Р°С‚ РІР°С€РµР№ РіСЂСѓРїРїС‹. РљР°РЅР°Р» "ps" - С‡Р°С‚ РІР°С€РµР№ РїР°СЂС‚РёРё. РљР°РЅР°Р» "l" - С‡Р°С‚ Р»РёРґРµСЂРѕРІ.')
         return
     end
 
     if not allowedChannels[channel] then
-        sendScriptMessage("Неизвестный канал. Доступно: fm, rn, fn, g, ps, l.")
+        sendScriptMessage("РќРµРёР·РІРµСЃС‚РЅС‹Р№ РєР°РЅР°Р». Р”РѕСЃС‚СѓРїРЅРѕ: fm, rn, fn, g, ps, l.")
         return
     end
 
     config.settings.channel = channel
     saveConfig()
 
-    sendScriptMessage(("Канал отправки координат изменён: %s."):format(allowedChannels[channel]))
+    sendScriptMessage(("РљР°РЅР°Р» РѕС‚РїСЂР°РІРєРё РєРѕРѕСЂРґРёРЅР°С‚ РёР·РјРµРЅС‘РЅ: %s."):format(allowedChannels[channel]))
 end
 function displayVehicleName(x, y, gxt)
     x, y = convertWindowScreenCoordsToGameScreenCoords(x, y)
@@ -370,7 +371,7 @@ function displayVehicleName(x, y, gxt)
 end
 function showCpoisDialog()
     if #markers ~= 0 then
-        local dialogText = "Ник игрока\tДистанция"
+        local dialogText = "РќРёРє РёРіСЂРѕРєР°\tР”РёСЃС‚Р°РЅС†РёСЏ"
 
         for _, value in ipairs(markers) do
             local positionX, positionY, _ = getCharCoordinates(PLAYER_PED)
@@ -387,8 +388,8 @@ function showCpoisDialog()
         local dialogId = 5100
         local dialogCaption = ("{808080}%s v%s"):format(thisScript().name, thisScript().version
         )
-        local dialogButton1 = "Поставить"
-        local dialogButton2 = "Выйти"
+        local dialogButton1 = "РџРѕСЃС‚Р°РІРёС‚СЊ"
+        local dialogButton2 = "Р’С‹Р№С‚Рё"
         local dialogStyle = 5
 
         lua_thread.create(function()
@@ -412,15 +413,15 @@ function showCpoisDialog()
                     local playerId = getPlayerIdByNickname(mark.playerNickname)
 
                     if playerId then
-                        sendScriptMessage(("Поставлена метка %s[%s] в сектор %s."):format(mark.playerNickname, playerId, findSectorAndSubsector(mark.posX, mark.posY)))
+                        sendScriptMessage(("РџРѕСЃС‚Р°РІР»РµРЅР° РјРµС‚РєР° %s[%s] РІ СЃРµРєС‚РѕСЂ %s."):format(mark.playerNickname, playerId, findSectorAndSubsector(mark.posX, mark.posY)))
                     else
-                        sendScriptMessage(("Поставлена метка %s в сектор %s."):format(mark.playerNickname, findSectorAndSubsector(mark.posX, mark.posY)))
+                        sendScriptMessage(("РџРѕСЃС‚Р°РІР»РµРЅР° РјРµС‚РєР° %s РІ СЃРµРєС‚РѕСЂ %s."):format(mark.playerNickname, findSectorAndSubsector(mark.posX, mark.posY)))
                     end
                 end
             end
         end)
     else
-        sendScriptMessage("Нет активных CPOI.")
+        sendScriptMessage("РќРµС‚ Р°РєС‚РёРІРЅС‹С… CPOI.")
     end
 end
 function onScriptTerminate(script, quitGame)
@@ -441,11 +442,12 @@ function removeUserBlip()
 
     mapMarker.coordinates = {}
     mapMarker.timer = 0
+    mapMarker.isCpoi = false
 end
 function sendBlipInChat(x, y, z)
     if not x or not y or not z then return end
     local command = getConfiguredChannelCommand()
-    sampSendChat(string.format("%s Установил метку в %s. | CPOIX%sY%sZ%sE", command,findSectorAndSubsector(x, y), round(x), round(y), round(z)))
+    sampSendChat(string.format("%s РЈСЃС‚Р°РЅРѕРІРёР» РјРµС‚РєСѓ РІ %s. | CPOIX%sY%sZ%sE", command,findSectorAndSubsector(x, y), round(x), round(y), round(z)))
 end
 
 function sampev.onServerMessage(color, text)
@@ -458,7 +460,7 @@ function sampev.onServerMessage(color, text)
 
     if not x then x, y, z = cleanText:match("CPOI%s*X%s*(%-?%d+)%s*Y%s*(%-?%d+)%s*Z%s*(%-?%d+)%s*E") end
     if not x then return end
-    if not cleanText:find("Установил метку", 1, true) then return end
+    if not cleanText:find("РЈСЃС‚Р°РЅРѕРІРёР» РјРµС‚РєСѓ", 1, true) then return end
 
     x, y, z = tonumber(x), tonumber(y), tonumber(z)
     if not x or not y or not z then return end
@@ -470,15 +472,16 @@ function sampev.onServerMessage(color, text)
     mapMarker.coordinates.y = y
     mapMarker.coordinates.z = z
     mapMarker.timer = os.clock()
+    mapMarker.isCpoi = true
 
     setMarker(checkpointType, x, y, z, checkpointRadius)
     addCpoiToList(x, y, z, nick)
     local playerId = pid or getPlayerIdByNickname(nick)
 
     if playerId then
-        sendScriptMessage(("%s[%s] поставил метку в сектор %s."):format(nick, playerId, findSectorAndSubsector(x, y)))
+        sendScriptMessage(("%s[%s] РїРѕСЃС‚Р°РІРёР» РјРµС‚РєСѓ РІ СЃРµРєС‚РѕСЂ %s."):format(nick, playerId, findSectorAndSubsector(x, y)))
     else
-        sendScriptMessage(("%s поставил метку в сектор %s."):format(nick, findSectorAndSubsector(x, y)))
+        sendScriptMessage(("%s РїРѕСЃС‚Р°РІРёР» РјРµС‚РєСѓ РІ СЃРµРєС‚РѕСЂ %s."):format(nick, findSectorAndSubsector(x, y)))
     end
 end
 function sampev.onSendMapMarker(position)
@@ -487,10 +490,15 @@ function sampev.onSendMapMarker(position)
         mapMarker.coordinates.y = position.y
         mapMarker.coordinates.z = position.z
         mapMarker.timer = os.clock()
+        mapMarker.isCpoi = false
 
-        sendScriptMessage(("Метка с карты сохранена. Нажми %s в течение 10 секунд для отправки."):format(keys.id_to_name(mapMarker.key)))
+        sendScriptMessage(("РњРµС‚РєР° СЃ РєР°СЂС‚С‹ СЃРѕС…СЂР°РЅРµРЅР°. РќР°Р¶РјРё %s РІ С‚РµС‡РµРЅРёРµ 10 СЃРµРєСѓРЅРґ РґР»СЏ РѕС‚РїСЂР°РІРєРё."):format(keys.id_to_name(mapMarker.key)))
 
         return false
+    else
+        mapMarker.coordinates = {}
+        mapMarker.timer = 0
+        mapMarker.isCpoi = false
     end
 end
 function get_crosshair_position()
@@ -579,7 +587,7 @@ function findSectorAndSubsector(x, y)
         return nil
     end
     local squareList = {
-        "А", "Б", "В", "Г", "Д", "Ж", "З", "И", "К", "Л", "М", "Н", "О", "П", "Р", "С", "Т", "У", "Ф", "Х", "Ц", "Ч", "Ш", "Я"
+        "Рђ", "Р‘", "Р’", "Р“", "Р”", "Р–", "Р—", "Р", "Рљ", "Р›", "Рњ", "Рќ", "Рћ", "Рџ", "Р ", "РЎ", "Рў", "РЈ", "Р¤", "РҐ", "Р¦", "Р§", "РЁ", "РЇ"
     }
 
     return ("%s-%s-%s"):format(squareList[sectorY], sectorX, findSubsectorNumber(subsectorX, subsectorY))
@@ -597,15 +605,15 @@ function checkAndInstallKransovMods()
         return true 
     end 
     sampAddChatMessage('{FFA500}--------------------------------------', -1) 
-    sampAddChatMessage('{FFA500}[KRANSOV MODS]{FFFFFF} Внимание, бродяга!', -1) 
-    sampAddChatMessage('{FFA500}[KRANSOV MODS]{FFFFFF} Менеджер не найден. Сейчас будет установка.', -1) 
-    sampAddChatMessage('{FFA500}[KRANSOV MODS]{FFFFFF} Источник: GitHub (MarcusKransovv/Kransov-Mods)', -1) 
+    sampAddChatMessage('{FFA500}[KRANSOV MODS]{FFFFFF} Р’РЅРёРјР°РЅРёРµ, Р±СЂРѕРґСЏРіР°!', -1) 
+    sampAddChatMessage('{FFA500}[KRANSOV MODS]{FFFFFF} РњРµРЅРµРґР¶РµСЂ РЅРµ РЅР°Р№РґРµРЅ. РЎРµР№С‡Р°СЃ Р±СѓРґРµС‚ СѓСЃС‚Р°РЅРѕРІРєР°.', -1) 
+    sampAddChatMessage('{FFA500}[KRANSOV MODS]{FFFFFF} РСЃС‚РѕС‡РЅРёРє: GitHub (MarcusKransovv/Kransov-Mods)', -1) 
     sampAddChatMessage('{FFA500}--------------------------------------', -1) 
     lua_thread.create(function() 
         local temp_file = getWorkingDirectory() .. '\\temp_kransov_download.tmp' 
         local download_complete = false 
         local download_success = false 
-        sampAddChatMessage('{FFA500}[KRANSOV MODS]{FFFFFF} Скачиваю менеджер...', -1) 
+        sampAddChatMessage('{FFA500}[KRANSOV MODS]{FFFFFF} РЎРєР°С‡РёРІР°СЋ РјРµРЅРµРґР¶РµСЂ...', -1) 
         downloadUrlToFile(KRANSOV_MANAGER_URL, temp_file, function(id, status, p1, p2) 
             if status == dlstatus.STATUS_ENDDOWNLOADDATA then 
                 download_success = true 
@@ -633,17 +641,17 @@ function checkAndInstallKransovMods()
                         output:flush() 
                         output:close() 
                         if doesFileExist(KRANSOV_MANAGER_FILE) then 
-                            sampAddChatMessage('{00FF00}[KRANSOV MODS]{FFFFFF} Менеджер установлен!', -1) 
-                            sampAddChatMessage('{00FF00}[KRANSOV MODS]{FFFFFF} Перезагрузите MoonLoader (F12) или перезайдите в игру', -1) 
-                            sampAddChatMessage('{00FF00}[KRANSOV MODS]{FFFFFF} После перезахода: /kransov — каталог скриптов', -1) 
+                            sampAddChatMessage('{00FF00}[KRANSOV MODS]{FFFFFF} РњРµРЅРµРґР¶РµСЂ СѓСЃС‚Р°РЅРѕРІР»РµРЅ!', -1) 
+                            sampAddChatMessage('{00FF00}[KRANSOV MODS]{FFFFFF} РџРµСЂРµР·Р°РіСЂСѓР·РёС‚Рµ MoonLoader (F12) РёР»Рё РїРµСЂРµР·Р°Р№РґРёС‚Рµ РІ РёРіСЂСѓ', -1) 
+                            sampAddChatMessage('{00FF00}[KRANSOV MODS]{FFFFFF} РџРѕСЃР»Рµ РїРµСЂРµР·Р°С…РѕРґР°: /kransov вЂ” РєР°С‚Р°Р»РѕРі СЃРєСЂРёРїС‚РѕРІ', -1) 
                             return 
                         end 
                     end 
                 end 
             end 
         end 
-        sampAddChatMessage('{FF0000}[KRANSOV MODS]{FFFFFF} Не удалось установить менеджер.', -1) 
-        sampAddChatMessage('{FF0000}[KRANSOV MODS]{FFFFFF} Скачай вручную: github.com/MarcusKransovv/Kransov-Mods', -1) 
+        sampAddChatMessage('{FF0000}[KRANSOV MODS]{FFFFFF} РќРµ СѓРґР°Р»РѕСЃСЊ СѓСЃС‚Р°РЅРѕРІРёС‚СЊ РјРµРЅРµРґР¶РµСЂ.', -1) 
+        sampAddChatMessage('{FF0000}[KRANSOV MODS]{FFFFFF} РЎРєР°С‡Р°Р№ РІСЂСѓС‡РЅСѓСЋ: github.com/MarcusKransovv/Kransov-Mods', -1) 
         if doesFileExist(temp_file) then
             os.remove(temp_file)
         end
