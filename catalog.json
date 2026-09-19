@@ -27,7 +27,7 @@
             "last_update": "27.08.2026",
             "link": "https://github.com/MarcusKransovv/Kransov-Mods/raw/refs/heads/main/scripts/gaylocator.lua"
         },
-                {
+        {
             "name": "Bank Helper",
             "filename": "bank-helper.lua",
             "version": "1.0.0",
@@ -35,6 +35,15 @@
             "history": "Версия 1.0.0 - 29.08.2026\n- Авто-ввод PIN для своих счетов\n- Быстрые суммы (телефон, счета, переводы)\n- Список получателей с поиском\n- Смена PIN без похода в банк\n- Уведомления с анимацией",
             "last_update": "29.08.2026",
             "link": "https://github.com/MarcusKransovv/Kransov-Mods/raw/refs/heads/main/scripts/bank-helper.lua"
+        },
+        {
+            "name": "CPOI",
+            "filename": "commonPoi.lua",
+            "version": "1.0.0",
+            "description": "Инструмент координации CPOI для Advance-RP",
+            "history": "Версия 1.0.0 - 19.09.2026\n- Отправка координат в чаты: /fm, /rn, /fn, /g, /ps, /l\n- Наведение курсором (Alt + боковая кнопка мыши)\n- Метка по прицелу (боковая кнопка мыши)\n- Метка с карты (клавиша U в течение 10 секунд)\n- Список активных меток: /cpois\n- Выбор канала: /cpoichat\n- Сброс метки и чекпоинта: /rub",
+            "last_update": "19.09.2026",
+            "link": "https://github.com/MarcusKransovv/Kransov-Mods/raw/refs/heads/main/scripts/commonPoi.lua"
         }
     ]
 }
